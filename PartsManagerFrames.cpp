@@ -419,14 +419,25 @@ void PartsManagerFrames::OnEditPart(wxCommandEvent& event) {
 }
 
 void PartsManagerFrames::OnDeletePart(wxCommandEvent& event) {
-    if (selectedPartIndex == -1) return;
-    wxLogMessage("Deleting part: %s", inventory[selectedPartIndex].getPartNumber());
-    partList->DeleteItem(selectedPartIndex);
+
+    // Validate selectedPartIndex
+    if (selectedPartIndex < 0 || selectedPartIndex >= static_cast<int>(inventory.size())) {
+        return;
+    }
+
+    // Remove the part from the inventory
     inventory.erase(inventory.begin() + selectedPartIndex);
+
+    // Remove the part from the list control
+    partList->DeleteItem(selectedPartIndex);
+
+    // Reset selectedPartIndex and disable buttons
     selectedPartIndex = -1;
     editButton->Disable();
     deleteButton->Disable();
-    UpdateTotalCost(); // Update total cost after deleting
+
+    // Update total cost after deletion
+    UpdateTotalCost();
 }
 
 void PartsManagerFrames::OnSaveChanges(wxCommandEvent& event) {
